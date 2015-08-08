@@ -1,0 +1,76 @@
+<html>
+
+<head>
+    <title>Tweets by location</title>
+    <script type="text/javascript">
+    	window.setTimeout(function(){ document.location.reload(true); }, 5000);
+    </script>
+  	<style type="text/css">
+	    html,
+	    body,
+	    #basicMap {}
+	</style>
+</head>
+
+
+
+<script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+<script>
+	function init() {
+
+		var map = new OpenLayers.Map("basicMap");
+		var layer = new OpenLayers.Layer.OSM("OpenStreetMap");
+		map.addLayer(layer);
+
+		map.addControl(new OpenLayers.Control.LayerSwitcher());
+		map.setCenter(new OpenLayers.LonLat(0, 0), 2);
+
+		var pointLayer = new OpenLayers.Layer.Vector("Features", {
+			projection: "EPSG:933913"
+		});
+		map.addLayer(pointLayer);
+
+		// Create some random feature points
+		var pointFeatures = [];
+
+		var rawFile = new XMLHttpRequest();
+
+		var requestRandomNum = Math.floor((Math.random() * 1000000000) + 1);
+		rawFile.open("GET", "http://0.0.0.0:8000/tweets.csv?" + requestRandomNum, true);
+		rawFile.onreadystatechange = function() {
+			if (rawFile.readyState === 4) {
+				if (rawFile.status === 200 || rawFile.status == 0) {
+					lines = rawFile.responseText.split("\n");
+					for (var i = 0; i < lines.length; i++) {
+
+						var atributos = lines[i].split(',');
+
+						var px = Math.random() * 360 - 180;
+						var py = Math.random() * 170 - 85;
+						var lonlat = new OpenLayers.LonLat(atributos[1], atributos[0]);
+						lonlat.transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+						var pointGeometry = new OpenLayers.Geometry.Point(lonlat.lon, lonlat.lat);
+
+						var pointFeature = new OpenLayers.Feature.Vector(pointGeometry);
+
+						pointFeature.style = {
+							fillColor: '#168A2D',
+							fillOpacity: 0.7,
+							strokeColor: '#168A2D',
+							pointRadius: 2
+						};
+						pointFeatures.push(pointFeature);
+					}
+					pointLayer.addFeatures(pointFeatures);
+				}
+			}
+		}
+		rawFile.send(null);
+
+	}
+</script>
+
+<body onload="init();">
+    <div id="basicMap" style="width:1000px; height:562px;">
+    </div>
+</body>
