@@ -18,9 +18,9 @@ This will run Twitter stream reader daemon and write each tweet's latitude, long
 
 ## Displaying the tweets in a map
 
-An HTTP server must run at the project's directory, run the next command:
+In order to display the tweets in a map, an HTTP server must run at the project's directory with the next command:
 
 	python -m SimpleHTTPServer
 
 
-Finally, open a browser at [http://0.0.0.0:8000/gis.html](http://0.0.0.0:8000/gis.html) and it will display new tweets in a map every 20 seconds.
+Finally, open a browser at [http://0.0.0.0:8000/gis.html](http://0.0.0.0:8000/gis.html) and it will display a map refresh it every 20 seconds.
